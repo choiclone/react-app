@@ -1,13 +1,19 @@
+import { findAllByTestId } from '@testing-library/dom';
 import React, { Component } from 'react';
 
 class TOC extends Component {
+    shouldComponentUpdate(newProps, newState){
+        if(this.props.data === newProps.data){
+            return false;
+        }
+        return true;
+    }
     render(){
         const navlist = this.props.data.map((content) => (
             <li key={content.id}><a href={"/content/"+content.id} 
                 data-id={content.id} 
                 onClick={function(id, title, e){
                     e.preventDefault();
-                    console.log(id, title)
                     this.props.onChangePage(e.target.dataset.id);
                 // this.props.onChangePage(content.id);
             }.bind(this, content.id, content.title)}>{content.title}</a></li>

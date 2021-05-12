@@ -47,6 +47,7 @@ class App extends Component {
     if(title !== "" && desc !== ""){
       this.max_content_id = this.max_content_id+1;
       // this.state.contents.push({
+      //   {id: this.max_content_id, title: title, desc: desc}
       // });
       var content = {id: this.max_content_id, title: title, desc: desc};
       this.setState({
