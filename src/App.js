@@ -3,6 +3,7 @@ import TOC from "./components/TOC";
 import Subject from "./components/Subject";
 import ReadContent from "./components/ReadContent";
 import CreateContent from "./components/CreateContent";
+import UpdateContent from "./components/UpdateContent";
 import Control from "./components/Control";
 import './App.css';
 
@@ -10,8 +11,8 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      mode:"create",
-      selected_content_id: 2,
+      mode:"welcome",
+      selected_content_id: 1,
       subject: {title: "WEB", sub: "World Wide Web!"},
       welcome: {title: "Welcome", desc:"Hello, React!!"},
       contents: [
@@ -38,9 +39,29 @@ class App extends Component {
   }
 
   changeMode(mode) {
-    this.setState({
-      mode: mode,
-    });
+    if(mode === "delete"){
+      if(window.confirm("삭제?")){
+        var _contents = Array.from(this.state.contents);
+        var i = 0;
+        while(i < this.state.contents.length){
+          if(_contents[i].id === this.state.selected_content_id){
+            _contents.splice(i, 1);
+            break;
+          }
+          i+=1;
+        }
+        this.setState({
+          mode: "welcome",
+          contents: _contents,
+        });
+      }else{
+        console.log("111")
+      }
+    }else{
+      this.setState({
+        mode: mode,
+      });
+    }
   }
 
   submitChange(title, desc){
@@ -51,12 +72,53 @@ class App extends Component {
       // });
       var content = {id: this.max_content_id, title: title, desc: desc};
       this.setState({
+        mode: "read",
+        selected_content_id: this.max_content_id,
         contents:this.state.contents.concat(content),
       });
+      // immutable을 할 시[유사 배열, 유사 객체를 만들 시]
+      // Array.from을 사용할 시[배열을 바꾸고 싶을 시]
+      // var newContents = Array.from(this.state.contents);
+      // newContents.push({
+      //   id: this.max_content_id, title: title, desc: desc
+      // });
+      // this.setState({
+      //   contents:newContents,
+      // });
+
+      //Object.assign을 사용할 시[객체를 바꾸고 싶을 시]
     }
   }
 
-  render() {
+  submitChangeUpdate(id, title, desc) {
+    var updatContents = Array.from(this.state.contents);
+    var i = 1;
+    while(i < updatContents.length){
+      if(updatContents[i].id === id){
+        updatContents[i] = {id: id, title: title, desc: desc}
+        break;
+      }
+      i+=1;
+    }
+    this.setState({
+      mode: "read",
+      contents: updatContents
+    })
+  }
+
+  getReadContent(){
+    var i = 0;
+    while(i < this.state.contents.length){
+      var data = this.state.contents[i];
+      if(data.id == this.state.selected_content_id){
+        return data;
+        break;
+      }
+      i+=1;
+    }
+  }
+  
+  getContent(){
     var _title, _desc, _article = null;
 
     if(this.state.mode === "welcome"){
@@ -64,30 +126,36 @@ class App extends Component {
       _desc = this.state.welcome.desc;
       _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
     }else if(this.state.mode === "read"){
-      var i = 0;
-      while(i < this.state.contents.length){
-        var data = this.state.contents[i];
-        if(data.id == this.state.selected_content_id){
-          _title = data.title;
-          _desc = data.desc;
-          break;
-        }
-        i+=1;
-      }
-      _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
+      var _content = this.getReadContent();
+      _article = <ReadContent title={_content.title} desc={_content.desc}></ReadContent>;
     }else if(this.state.mode === "create"){
       _article = <CreateContent onSubmit={this.submitChange.bind(this)}></CreateContent>;
+    }else if(this.state.mode === "update"){
+      var _content = this.getReadContent();
+      console.log(_content)
+      if(_content !== undefined)
+        _article = <UpdateContent data={_content} onSubmit={this.submitChangeUpdate.bind(this)}></UpdateContent>
+      else{
+        _title = this.state.welcome.title;
+        _desc = this.state.welcome.desc;
+        _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
+      }
+
     }
 
+    return _article;
+  }
+
+  render() {
     return (
       <div className="App">
         <Subject 
           title={this.state.subject.title} 
-          sub={this.state.subject.sub} onChangePage={this.changeWelcome.bind(this)}>
+          sub={this.state.subject.sub} onChangePage={this.changeWelcome.bind(this)}>s
         </Subject>
         <TOC onChangePage={this.changeNavContent.bind(this)} data={this.state.contents}></TOC>
         <Control onChangeMode={this.changeMode.bind(this)}></Control>
-        {_article}
+        {this.getContent()}
       </div>
     );
   }
