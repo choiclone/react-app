@@ -30,12 +30,12 @@ class App extends Component {
       mode: "welcome"
     });
   }
-
+  
   changeNavContent(id){
     this.setState({
       mode: "read",
       selected_content_id: parseInt(id),
-    })
+    });
   }
 
   changeMode(mode) {
