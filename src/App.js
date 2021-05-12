@@ -112,7 +112,6 @@ class App extends Component {
       var data = this.state.contents[i];
       if(data.id == this.state.selected_content_id){
         return data;
-        break;
       }
       i+=1;
     }
@@ -131,10 +130,10 @@ class App extends Component {
     }else if(this.state.mode === "create"){
       _article = <CreateContent onSubmit={this.submitChange.bind(this)}></CreateContent>;
     }else if(this.state.mode === "update"){
-      var _content = this.getReadContent();
-      console.log(_content)
-      if(_content !== undefined)
-        _article = <UpdateContent data={_content} onSubmit={this.submitChangeUpdate.bind(this)}></UpdateContent>
+      var _contentsd = this.getReadContent();
+      console.log(_contentsd)
+      if(_contentsd !== undefined)
+        _article = <UpdateContent data={_contentsd} onSubmit={this.submitChangeUpdate.bind(this)}></UpdateContent>
       else{
         _title = this.state.welcome.title;
         _desc = this.state.welcome.desc;
