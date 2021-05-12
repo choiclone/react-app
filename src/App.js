@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import TOC from "./components/TOC";
 import Subject from "./components/Subject";
-import Content from "./components/Content";
+import ReadContent from "./components/ReadContent";
+import CreateContent from "./components/CreateContent";
 import Control from "./components/Control";
 import './App.css';
 
@@ -9,7 +10,7 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      mode:"read",
+      mode:"create",
       selected_content_id: 2,
       subject: {title: "WEB", sub: "World Wide Web!"},
       welcome: {title: "Welcome", desc:"Hello, React!!"},
@@ -19,6 +20,8 @@ class App extends Component {
         {id: 3, title:"JS", desc: "JS is for Information ..."},
       ]
     }
+    let leng = this.state.contents.length;
+    this.max_content_id = this.state.contents[leng-1].id;
   }
 
   changeWelcome(e){
@@ -30,15 +33,35 @@ class App extends Component {
   changeNavContent(id){
     this.setState({
       mode: "read",
-      selected_content_id: parseInt(id)
+      selected_content_id: parseInt(id),
     })
   }
 
+  changeMode(mode) {
+    this.setState({
+      mode: mode,
+    });
+  }
+
+  submitChange(title, desc){
+    if(title !== "" && desc !== ""){
+      this.max_content_id = this.max_content_id+1;
+      // this.state.contents.push({
+      // });
+      var content = {id: this.max_content_id, title: title, desc: desc};
+      this.setState({
+        contents:this.state.contents.concat(content),
+      });
+    }
+  }
+
   render() {
-    var _title, _desc = "";
+    var _title, _desc, _article = null;
+
     if(this.state.mode === "welcome"){
       _title = this.state.welcome.title;
       _desc = this.state.welcome.desc;
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
     }else if(this.state.mode === "read"){
       var i = 0;
       while(i < this.state.contents.length){
@@ -50,7 +73,11 @@ class App extends Component {
         }
         i+=1;
       }
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
+    }else if(this.state.mode === "create"){
+      _article = <CreateContent onSubmit={this.submitChange.bind(this)}></CreateContent>;
     }
+
     return (
       <div className="App">
         <Subject 
@@ -58,8 +85,8 @@ class App extends Component {
           sub={this.state.subject.sub} onChangePage={this.changeWelcome.bind(this)}>
         </Subject>
         <TOC onChangePage={this.changeNavContent.bind(this)} data={this.state.contents}></TOC>
-        <Control></Control>
-        <Content title={_title} desc={_desc}></Content>
+        <Control onChangeMode={this.changeMode.bind(this)}></Control>
+        {_article}
       </div>
     );
   }
