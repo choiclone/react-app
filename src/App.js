@@ -102,8 +102,8 @@ class App extends Component {
     }
     this.setState({
       mode: "read",
-      contents: updatContents
-    })
+      contents: updatContents,
+    });
   }
 
   getReadContent(){
