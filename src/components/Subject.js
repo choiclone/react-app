@@ -9,6 +9,16 @@ class Subject extends Component {
                 this.props.onChangePage();
             }.bind(this)}>{this.props.title}</a></h1>
             {this.props.sub}
+        {/* <header>
+            <h1><a href="/" onClick={function(e){
+                console.log(e);
+                e.preventDefault();
+                this.setState({
+                  mode: "welcome"
+                })
+            }.bind(this)}>{this.state.subject.title}</a></h1>
+            {this.state.subject.sub}
+        </header> */}
         </header>
       );
     }
